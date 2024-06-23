@@ -150,9 +150,9 @@ const Cadastro = () => {
       <TouchableOpacity onPress={handleSignUp} style={styles.button} activeOpacity={0.1}>
         <Text style={styles.buttonText}>{loading ? 'Carregando...' :'Cadastrar'}</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={handleNavegarLogin} style={styles.button} activeOpacity={0.1}>
-        <Text style={styles.buttonText}>Ir para login</Text>
-      </TouchableOpacity>
+
+        <Text onPress={handleNavegarLogin} style={styles.refEsqueciSenha}>Voltar pro login?</Text>
+      
     </View>
   );
 };
@@ -204,6 +204,13 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#FFF7EB', 
+    fontSize: 18,
+    fontWeight: '600',
+  },
+
+  refEsqueciSenha:{
+    marginTop: 50,
+    color: '#FFF7EB',
     fontSize: 18,
     fontWeight: '600',
   },

@@ -150,9 +150,8 @@ const Login = () => {
       <TouchableOpacity onPress={handleLogin} style={styles.button} activeOpacity={0.1}>
         <Text style={styles.buttonText}>{loading ? 'Carregando...' : 'Entrar'}</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={handleNavegarCadastro} style={styles.button} activeOpacity={0.1}>
-        <Text style={styles.buttonText}>Ir para cadastro</Text>
-      </TouchableOpacity>
+      
+      <Text onPress={handleNavegarCadastro} style={styles.refEsqueciSenha}>Cadastrar conta</Text>
 
       <Text onPress={handleNavegarEsqueceuSenha} style={ styles.refEsqueciSenha }>Esqueceu a senha?</Text>
         
@@ -230,7 +229,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   refEsqueciSenha :{
-      marginTop: 50,
+      marginTop: 40,
       color: '#FFF7EB',
       fontSize: 18,
       fontWeight: '600',

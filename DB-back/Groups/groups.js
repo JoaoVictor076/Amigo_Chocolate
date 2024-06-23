@@ -27,7 +27,8 @@ router.post('/groupRegister', async (req, res) => {
             descricao,
             adminUid,
             participantes,
-            image
+            image,
+            sorteado: false,
         });
 
         const groupData = {
@@ -41,6 +42,8 @@ router.post('/groupRegister', async (req, res) => {
             participantes,
             groupId,
             image,
+            sorteado: false,
+            pares: []
         };
         res.status(200).send(groupData);
     } catch (error) {
@@ -98,8 +101,6 @@ router.post('/getParticipants', async (req, res) => {
         if (!groupId) {
             return res.status(400).send({ error: 'groupId é necessário' });
         }
-
-        console.log('groupId', groupId);
 
         const groupRef = doc(db, 'groups', groupId); 
         const groupSnap = await getDoc(groupRef);
@@ -200,17 +201,23 @@ router.post('/sortear', async (req, res) => {
         const { groupId } = req.body;
 
         if (!groupId) {
-            return res.status(400).send({ error: 'groupId é necessário' });
+            return res.status(300).send({ error: 'groupId é necessário' });
         }
 
         const groupRef = doc(db, 'groups', groupId);
         const groupSnap = await getDoc(groupRef);
 
         if (!groupSnap.exists()) {
-            return res.status(404).send('Grupo não encontrado');
+            return res.status(301).send('Grupo não encontrado');
         }
 
         const groupData = groupSnap.data();
+
+        // Verifica se o grupo já foi sorteado
+        if (groupData.sorteado) {
+            return res.status(302).send('Este grupo já foi sorteado.');
+        }
+
         let participants = groupData.participantes;
         const dataRevelacaoStr = groupData.dataRevelacao;
 
@@ -224,7 +231,7 @@ router.post('/sortear', async (req, res) => {
 
         const currentDate = new Date();
         if (currentDate < dataRevelacao) {
-            return res.status(403).send('A data de revelação ainda não chegou');
+            return res.status(303).send('A data de revelação ainda não chegou');
         }
 
         shuffleArray(participants);
@@ -238,6 +245,26 @@ router.post('/sortear', async (req, res) => {
             }
         }
 
+        let flattenedPairs = [];
+        for (let i = 0; i < participants.length; i += 2) {
+            if (i + 1 < participants.length) {
+                flattenedPairs.push({
+                    participant1: participants[i],
+                    participant2: participants[i + 1]
+                });
+            } else {
+                flattenedPairs.push({
+                    participant1: participants[i],
+                    participant2: "Deus" // ou alguma outra designação especial
+                });
+            }
+        }
+
+        await updateDoc(groupRef, {
+            pares: flattenedPairs,
+            sorteado: true
+        });
+
         res.status(200).send(pairs);
     } catch (error) {
         console.error('Erro ao sortear participantes:', error);
@@ -245,13 +272,13 @@ router.post('/sortear', async (req, res) => {
     }
 });
 
+
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
 }
-
 
 
 module.exports = router;

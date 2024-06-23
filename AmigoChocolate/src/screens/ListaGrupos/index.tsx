@@ -24,9 +24,18 @@ type GroupProps = {
   handleNavegarParticipantes:(groupId: string) => void, 
   handleAtualizarGrupo: (groupId: string) => void,
   handleSortear: (groupId: string) => void,
+  handleBuscarPar: (groupId: string) => Promise<any>;
   nomeDoGrupo: string,
   image: string,
   groupId: string,
+};
+
+type Par = {
+  avatarUrl: string | null;
+  sorteado: boolean;
+  email: string;
+  nome: string;
+  sobrenome: string;
 };
 
 const GroupComponent: React.FC<GroupProps> = ({
@@ -41,52 +50,76 @@ const GroupComponent: React.FC<GroupProps> = ({
   handleNavegarParticipantes,
   handleAtualizarGrupo,
   handleSortear,
-}) => (
-  <View style={styles.nomeGrupocontainer}>
-    <TouchableOpacity 
-      onPress={()=>{handleSortear(groupId)}}
-      style={styles.buttonIconSorteio} 
-      activeOpacity={0.1}>
-        <Image style={styles.imageStyle} source={{ uri: image }}  />
-    </TouchableOpacity>
-    <View style={styles.grupo}>
-      <Text style={styles.nomeGrupo}>{nomeGrupo}</Text>
-      <Text>
-        <Text style={styles.text}>Descrição:</Text> {descricao}
-      </Text>
-      <Text>
-        <Text style={styles.text}>Data Revelação:</Text> {dataRevelacao}
-      </Text>
-      <Text>
-        <Text style={styles.text}>Quantidade Max:</Text> {qtdMax}
-      </Text>
-    </View>
-    <View>
+  handleBuscarPar,
+}) => {
+  const [meuPar, setMeuPar] = useState<Par | null>(null);
+
+  useEffect(() => {
+    const buscarMeuPar = async () => {
+      try {
+        const parEncontrado = await handleBuscarPar(groupId);
+        setMeuPar(parEncontrado);
+      } catch (error) {
+        console.error('Erro ao buscar par:', error);
+      }
+    };
+
+    buscarMeuPar();
+  }, [groupId]);
+
+  return (
+    <View style={styles.nomeGrupocontainer}>
       <TouchableOpacity 
-      onPress={()=>{handleAtualizarGrupo(groupId)}}
-      style={styles.buttonIcon} 
-      activeOpacity={0.1}>
-        <AntDesign name="edit" size={25} color="black" />
+        onPress={() => { handleSortear(groupId) }}
+        style={styles.buttonIconSorteio} 
+        activeOpacity={0.1}>
+        <Image style={styles.imageStyle} source={{ uri: image }}  />
       </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => handleNavegarConvite(nomeDoGrupo, groupId)}
-        style={styles.buttonIcon}
-        activeOpacity={0.1}
-      >
-        <SimpleLineIcons name="envelope" size={25} color="black" />
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => handleNavegarParticipantes(groupId)} style={styles.buttonIcon} activeOpacity={0.1}>
-        <AntDesign name="team" size={25} color="black" />
-      </TouchableOpacity>
+      <View style={styles.grupo}>
+        <Text style={styles.nomeGrupo}>{nomeGrupo}</Text>
+        <Text>
+          <Text style={styles.text}>Descrição:</Text> {descricao}
+        </Text>
+        <Text>
+          <Text style={styles.text}>Data Revelação:</Text> {dataRevelacao}
+        </Text>
+        <Text>
+          <Text style={styles.text}>Quantidade Max:</Text> {qtdMax}
+        </Text>
+        <Text>
+          <Text style={styles.text}>Seu par:</Text> {meuPar ? meuPar.nome : 'Grupo não sorteado'}
+        </Text>
+      </View>
+      <View>
+        <TouchableOpacity 
+          onPress={() => { handleAtualizarGrupo(groupId) }}
+          style={styles.buttonIcon} 
+          activeOpacity={0.1}>
+          <AntDesign name="edit" size={25} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => handleNavegarConvite(nomeDoGrupo, groupId)}
+          style={styles.buttonIcon}
+          activeOpacity={0.1}
+        >
+          <SimpleLineIcons name="envelope" size={25} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => handleNavegarParticipantes(groupId)} style={styles.buttonIcon} activeOpacity={0.1}>
+          <AntDesign name="team" size={25} color="black" />
+        </TouchableOpacity>
+      </View>
     </View>
-  </View>
-);
+  );
+};
+
+
 
 const ListaGrupos = () => {
   const navigation = useNavigation<StackTypes>();
   const [userDatail, setUserDatail] = useState<UserDetails | null>(null);
   const [groups, setGroups] = useState<any[]>([]);
   const [message, setMessage] = useState<string>('Clique na foto do grupo para sortear');
+  const [pares, setPares] = useState<any[]>([]);
 
   const URL = 'http://localhost:3000/';
   const URLF = 'http://localhost:8081/';
@@ -133,7 +166,7 @@ const ListaGrupos = () => {
   
       if (response.status === 200) {
         setMessage('Grupo sorteado com sucesso! ');
-        console.log('Pares:', response.data);
+        handleNavegarHome();
       } else {
         setMessage('Erro ao sortear grupo: ' + response.data);
       }
@@ -148,12 +181,52 @@ const ListaGrupos = () => {
     }
   }
 
+  async function handleBuscarPar(groupId: string) {
+    try {
+      const response = await axios.post(`${URL}groups/getGroupById`, { groupId });
+
+      if (response.status === 200) {
+        setPares(response.data.pares);
+
+        let parUid = null;
+        if(response.data.pares){
+          for (let i = 0; i < response.data.pares.length; i++) {
+            if (response.data.pares[i].participant1 === userDatail?.uid) {
+              parUid = response.data.pares[i].participant2;
+              break;
+            } else if (response.data.pares[i].participant2 === userDatail?.uid) {
+              parUid = response.data.pares[i].participant1;
+              break;
+            }
+          }
+        }
+
+        if (parUid) {
+          const parResponse = await axios.post(`${URL}api/getUserByUid`, { uid: parUid });
+
+          if (parResponse.status === 200) {
+            return(parResponse.data);
+          } else {
+            console.error('Erro ao buscar o par: ', parResponse.data);
+          }
+        } else {
+          console.log('Par não encontrado.');
+        }
+      } else {
+        console.log('Erro ao buscar pares: ', response.data);
+      }
+    } catch (error: any) {
+      console.log('Erro ao buscar pares: ', error.message);
+    }
+  }
+
   useEffect(() => {
     userLoggedIn();
   }, []);
 
   useEffect(() => {
     if (userDatail) {
+      console.log(userDatail);
       try {
         const loadGroups = async () => {
           const response = await axios.post(`${URL}groups/getGroupList`, {
@@ -195,6 +268,7 @@ const ListaGrupos = () => {
             image={item.image}
             handleNavegarParticipantes={handleNavegarParticipantes}
             handleSortear={handleSortear}
+            handleBuscarPar={() => handleBuscarPar(item.groupId)}
           />
         )}
         keyExtractor={(item) => item.id.toString()}

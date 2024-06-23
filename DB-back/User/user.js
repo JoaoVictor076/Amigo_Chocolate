@@ -114,4 +114,27 @@ router.post('/recoverPassword', async (req, res) => {
     }
 });
 
+router.post('/getUserByUid', async (req, res) => {
+    try {
+        const { uid } = req.body;
+
+        if (!uid) {
+            return res.status(400).send({ error: 'UID é necessário' });
+        }
+
+        const userRef = doc(db, 'users', uid);
+        const userSnap = await getDoc(userRef);
+
+        if (!userSnap.exists()) {
+            return res.status(399).send('Usuário não encontrado');
+        }
+
+        const userData = userSnap.data();
+        res.status(200).send(userData);
+    } catch (error) {
+        console.error('Erro ao buscar usuário pelo UID:', error);
+        res.status(500).send(error);
+    }
+});
+
 module.exports = router;

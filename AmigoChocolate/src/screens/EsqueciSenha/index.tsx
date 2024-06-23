@@ -40,7 +40,7 @@ const EsqueceuSenha = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Esqueceu a senha</Text>
+      <Text style={styles.title}>Esqueceu a senha ?</Text>
       <Image
     style={styles.imageStyle}
     source={require('../../../assets/chocopng.png')}
@@ -55,9 +55,9 @@ const EsqueceuSenha = () => {
       <TouchableOpacity onPress={handleRecoverPassword} style={styles.button} activeOpacity={0.1}>
         <Text style={styles.buttonText}>Enviar</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={handleNavegarLogin} style={styles.button} activeOpacity={0.1}>
-        <Text style={styles.buttonText}>Ir para login</Text>
-      </TouchableOpacity>
+      
+        <Text onPress={handleNavegarLogin}  style={styles.refEsqueciSenha}>Voltar ao login</Text>
+     
     </View>
   );
 };
@@ -87,6 +87,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     fontSize: 16,
     color: '#5C3A21', // Mesma cor do texto dos inputs da tela de Login
+  },
+  refEsqueciSenha:{
+    marginTop: 50,
+      color: '#FFF7EB',
+      fontSize: 18,
+      fontWeight: '600',
   },
   button: {
     width: '80%',
