@@ -7,8 +7,6 @@ import { Title } from '../Login/style';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import  { signOut } from 'firebase/auth'
-import { auth } from '../../Config'
 
 
 const Home = () => {
@@ -23,23 +21,14 @@ const Home = () => {
     navigation.navigate('ListaGrupos');
   }
 
-  const handleLogout = useCallback(async () => {
-    await signOut(auth)
-    .then(()=>{
+  const handleLogout = () => {
       AsyncStorage.removeItem('@user');
       navigation.navigate('Login');
-      return true;
-    })
-    .catch((error) => {
-      console.log(error);
-      return false
-    })
-  }, [navigation])
+  }
 
   return (
     <View style={styles.container}>
       
-    
       <TouchableOpacity onPress={handleCriarGrupo} style={styles.button} activeOpacity={0.1}>
       <MaterialCommunityIcons name="account-group-outline" size={50} color="white" />
         <Text style={styles.buttonText}>Criar Grupo</Text>

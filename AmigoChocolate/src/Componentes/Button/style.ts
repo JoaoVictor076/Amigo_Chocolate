@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import theme from '/ProjetoVSCode/AmigoChocolate/AmigoChocolate/src/styles/theme';
+import theme from '../../styles/theme';
 
 export const ButtonApp = styled.TouchableOpacity`
   width: 80%;

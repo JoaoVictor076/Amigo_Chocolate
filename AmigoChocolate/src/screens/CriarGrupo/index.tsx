@@ -160,7 +160,7 @@ const  CriarGrupo=()=> {
 
   return (
     <View style={styles.container}>
-      {image ? <Image source={{ uri: image }} style={styles.imageStyleGroup}/> :  <Image source={require('/AmigoChocolate/AmigoChocolate/assets/avatar.png')} style={styles.imageStyleGroup}/>}
+      {image ? <Image source={{ uri: image }} style={styles.imageStyleGroup}/> :  <Image source={require('../../../assets/avatar.png')} style={styles.imageStyleGroup}/>}
       <View style={styles.content}>
         <TextInput style={styles.input} 
         placeholder="Nome" 
