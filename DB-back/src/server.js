@@ -15,8 +15,8 @@ app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Route imports
-const userRoutes = require('./User/user');
-const groupRoutes = require('./Groups/groups');
+const userRoutes = require('../User/user');
+const groupRoutes = require('../Groups/groups');
 
 // Route setup
 app.use('/api', userRoutes);
