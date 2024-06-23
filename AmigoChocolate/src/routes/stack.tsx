@@ -11,6 +11,7 @@ import ListaGrupos from '../screens/ListaGrupos';
 import Convites from '../screens/Convites';
 import ListaParticipantes from '../screens/ListarParticipantesGrupo';
 import AtualizarGrupo from '../screens/AtualizarGrupo';
+import Splash from '../screens/SplashScreen/splash';
 
 const linking = {
     prefixes: ['http://localhost:8081/'], 
@@ -26,7 +27,7 @@ const linking = {
 const Stack = createNativeStackNavigator();
 
 type StackNavigation = {
-    //Splash: undefined;
+    Splash: undefined;
     Home : undefined;
     Login : undefined;
     Cadastro: undefined;
@@ -46,6 +47,7 @@ export default function StackComponent(){
     return (
         <NavigationContainer linking={linking}>
             <Stack.Navigator>
+                <Stack.Screen  name="Splash" component={Splash}   options={{headerShown: false }}  />
                 <Stack.Screen  name="Login" component={Login}   options={{headerShown: false }}  />
                 <Stack.Screen  name="Cadastro" component={Cadastro}   options={{headerShown: false }}  />
                 <Stack.Screen  name="EsqueceuSenha" component={EsqueceuSenha}   options={{headerShown: false }}  />
