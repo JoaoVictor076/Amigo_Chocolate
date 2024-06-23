@@ -2,7 +2,7 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { Text, TextInput, View, StyleSheet, TouchableOpacity, Alert, Image } from 'react-native';
-import { StackTypes } from '../../routes/stack';
+import { StackTypes } from '/AmigoChocolate/AmigoChocolate/src/routes/stack';
 import axios from 'axios'
 
 const EsqueceuSenha = () => {
