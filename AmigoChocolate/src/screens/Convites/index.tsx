@@ -6,6 +6,7 @@ import { StackTypes } from '../../routes/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios'
 import { Title } from '../Login/style';
+import { URL } from '../config/index'
 
 type ParamsType = {
   Convites: {
@@ -14,7 +15,6 @@ type ParamsType = {
   },
 }
 
-const URL = 'http://localhost:3000/';
 
 const Convites = ({route} : {route: RouteProp<ParamsType, 'Convites'>}) => {
   const [userUid, setUserUid] = useState('')

@@ -6,6 +6,7 @@ import { StackTypes } from '../../routes/stack';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { URL } from '../config/index'
 
 type ParamsType = {
   AtualizarGrupo: {
@@ -29,7 +30,6 @@ const  AtualizarGrupo =({route} : {route: RouteProp<ParamsType, 'AtualizarGrupo'
   const [image, setImage] = useState<string | null>(null)
   const groupId = route.params.groupId
 
-  const URL = 'http://localhost:3000/';
 
   const navigation = useNavigation<StackTypes>();
 

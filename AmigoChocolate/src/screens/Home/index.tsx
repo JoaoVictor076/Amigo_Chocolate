@@ -7,9 +7,9 @@ import { Title } from '../Login/style';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { URL } from '../config/index'
 
-
-const Home = () => {
+const Home = () => { 
   
   const [user, setUser] = useState({})
   const navigation = useNavigation<StackTypes>();

@@ -3,14 +3,13 @@ import { Text, View, StyleSheet, TouchableOpacity, FlatList, Image } from 'react
 import { useNavigation, RouteProp  } from '@react-navigation/native';
 import { StackTypes } from '../../routes/stack';
 import axios from 'axios';
+import { URL } from '../config/index'
 
 type ParamsType = {
   ListaParticipantes: {
     groupId: string;
   },
 }
-
-const URL = 'http://localhost:3000/';
 
 const ListaParticipantes = ({route} : {route: RouteProp<ParamsType, 'ListaParticipantes'>}) => {
   const groupId = route.params.groupId

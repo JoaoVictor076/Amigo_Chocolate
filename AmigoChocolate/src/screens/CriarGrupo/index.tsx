@@ -6,6 +6,7 @@ import { View, Text, TextInput, StyleSheet, Button, Image,TouchableOpacity, Plat
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { URL } from '../config/index'
 
 const  CriarGrupo=()=> {
   
@@ -22,7 +23,6 @@ const  CriarGrupo=()=> {
   const [adminUid, setadminUid] = useState('')
   const [image, setImage] = useState<string | null>(null)
 
-  const URL = 'http://localhost:3000/';
 
   const navigation = useNavigation<StackTypes>();
 

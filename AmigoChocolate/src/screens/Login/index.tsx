@@ -4,6 +4,7 @@ import { Text, TextInput, View, StyleSheet, TouchableOpacity, Alert, Image } fro
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackTypes } from '../../routes/stack';
 import axios from 'axios';
+import { URL } from '../config/index'
 
 interface User{
   uid: string;
@@ -19,7 +20,6 @@ const Login = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const URL = 'http://localhost:3000/'
   const navigation = useNavigation<StackTypes>();
 
   const handleNavegarCadastro = () => {

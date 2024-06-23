@@ -4,11 +4,11 @@ import { Text, View, StyleSheet, TouchableOpacity, Image, FlatList } from 'react
 import { StackTypes } from '../../routes/stack';
 import { AntDesign, SimpleLineIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { db } from '../../Config';
 import { collection, onSnapshot, query, orderBy, where, updateDoc, doc, arrayUnion } from 'firebase/firestore';
 import axios from 'axios';
 import * as Clipboard from 'expo-clipboard';
 import Toast from 'react-native-toast-message';
+import { URL, URLF } from '../config/index'
 
 type UserDetails = {
   uid: string;
@@ -120,9 +120,7 @@ const ListaGrupos = () => {
   const [groups, setGroups] = useState<any[]>([]);
   const [message, setMessage] = useState<string>('Clique na foto do grupo para sortear');
   const [pares, setPares] = useState<any[]>([]);
-
-  const URL = 'http://localhost:3000/';
-  const URLF = 'http://localhost:8081/';
+  
 
   const copyToClipboard = async (link: string) => {
     const textToCopy = link;

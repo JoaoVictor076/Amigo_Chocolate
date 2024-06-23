@@ -24,7 +24,7 @@ app.use('/groups', groupRoutes);
 
 // Default route
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '/public/index.html'));
+    res.sendFile(path.join(__dirname, '../Public/index.html'));
 });
 
 // Start server

@@ -5,6 +5,7 @@ import { Text, TextInput, View, StyleSheet, TouchableOpacity, Alert, Image } fro
 import { StackTypes } from '../../routes/stack';
 import Login from '../Login';
 import axios from 'axios';
+import { URL } from '../config/index'
 
 const Cadastro = () => {
   const [email, setEmail] = useState<string>('');
@@ -18,7 +19,6 @@ const Cadastro = () => {
   const [user, setUser] = useState({})
   const [loading, setloading] = useState(false)
 
-  const URL = 'http://localhost:3000/'
 
   const navigation = useNavigation<StackTypes>();
 

@@ -4,10 +4,10 @@ import React, { useState } from 'react';
 import { Text, TextInput, View, StyleSheet, TouchableOpacity, Alert, Image } from 'react-native';
 import { StackTypes } from '../../routes/stack';
 import axios from 'axios'
+import { URL } from '../config/index'
 
 const EsqueceuSenha = () => {
   const [email, setEmail] = useState<string>('');
-  const URL = 'http://localhost:3000/'
 
   const navigation = useNavigation<StackTypes>();
 
