@@ -18,6 +18,8 @@ const Cadastro = () => {
   const [nomeConsole, setNomeConsole] = useState<string>(' ')
   const [user, setUser] = useState({})
   const [loading, setloading] = useState(false)
+  const [passwordConfirmation, setPasswordConfirmation] = useState<string>('');
+  const [passwordConfirmationConsole, setPasswordConfirmationConsole] = useState<string>(' ');
 
 
   const navigation = useNavigation<StackTypes>();
@@ -94,6 +96,14 @@ const Cadastro = () => {
     }
 
     if(regular){
+      if(passwordConfirmation !== password){
+        setPasswordConfirmationConsole('As senhas não conferem')
+        setloading(false)
+        regular = false
+      }
+    }
+
+    if(regular){
       setNome('')
       setNomeConsole(' ')
       setSobrenome('')
@@ -102,6 +112,8 @@ const Cadastro = () => {
       setEmailConsole(' ')
       setPassword('')
       setPassConsole(' ')
+      setPasswordConfirmation('')
+      setPasswordConfirmationConsole(' ')
       setloading(false)
     }
     
@@ -146,6 +158,15 @@ const Cadastro = () => {
         value={password}
       />
       <Text style={styles.console}>{passConsole}</Text>
+
+      <TextInput
+        style={styles.input}
+        placeholder="Confirme a senha"
+        secureTextEntry={true}
+        onChangeText={setPasswordConfirmation}
+        value={passwordConfirmation}
+      />
+      <Text style={styles.console}>{passwordConfirmationConsole}</Text>
 
       <TouchableOpacity onPress={handleSignUp} style={styles.button} activeOpacity={0.1}>
         <Text style={styles.buttonText}>{loading ? 'Carregando...' :'Cadastrar'}</Text>

@@ -19,6 +19,7 @@ type ParamsType = {
 const Convites = ({route} : {route: RouteProp<ParamsType, 'Convites'>}) => {
   const [userUid, setUserUid] = useState('')
   const [nome, setNome] = useState()
+  const [error, setError] = useState('')
 
   const navigation = useNavigation<StackTypes>();
 
@@ -42,8 +43,9 @@ const Convites = ({route} : {route: RouteProp<ParamsType, 'Convites'>}) => {
       } else {
         console.log('Erro ao entrar no grupo: ', response.data)
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log('Erro catch: ', error);
+      setError(error.request.response)
     }
   }
 
@@ -65,6 +67,7 @@ const Convites = ({route} : {route: RouteProp<ParamsType, 'Convites'>}) => {
       <View style = {styles.styleView}>
         <Text  style = {styles.title}> Convite</Text>
         <Text  style = {styles.title}> Você foi convidado a entrar no grupo {route.params.nome}</Text>
+        <Text  style = {styles.error}>{error} </Text>
       </View> 
       <TouchableOpacity onPress={handleAcceptInvite} style={styles.button} activeOpacity={0.1}>
         <Text style={styles.buttonText}>Aceitar</Text>
@@ -86,9 +89,16 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#fff', // Um azul escuro acinzentado para o título
+    color: '#fff', 
     textAlign: 'center',
-    marginTop: 20, // Aumente este valor conforme necessário para descer o texto
+    marginTop: 20, 
+  },
+  error: {
+    fontSize: 18,
+    fontWeight: '400',
+    color: '#fff', 
+    textAlign: 'center',
+    marginTop: 20, 
   },
   input: {
     width: '80%',

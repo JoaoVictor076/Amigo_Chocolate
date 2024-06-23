@@ -83,6 +83,17 @@ router.post('/addParticipant', async (req, res) => {
         }
 
         const groupRef = doc(db, 'groups', groupId);
+        const groupSnap = await getDoc(groupRef);
+
+        if (!groupSnap.exists()) {
+            return res.status(404).send({ error: 'Grupo não encontrado.' });
+        }
+
+        const groupData = groupSnap.data();
+
+        if (groupData.participantes.length >= groupData.qtdMax) {
+            return res.status(400).send('O grupo já atingiu a quantidade máxima de participantes.');
+        }
 
         await updateDoc(groupRef, {
             participantes: arrayUnion(userUid)
@@ -94,7 +105,6 @@ router.post('/addParticipant', async (req, res) => {
         res.status(500).send(error);
     }
 });
-
 router.post('/getParticipants', async (req, res) => {
     try {
         const { groupId } = req.body; 

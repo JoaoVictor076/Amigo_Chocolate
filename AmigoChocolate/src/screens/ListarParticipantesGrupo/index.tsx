@@ -1,25 +1,48 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, FlatList, Image } from 'react-native';
-import { useNavigation, RouteProp  } from '@react-navigation/native';
+import { Text, View, StyleSheet, TouchableOpacity, FlatList, Image, ActivityIndicator } from 'react-native';
+import { useNavigation, RouteProp } from '@react-navigation/native';
 import { StackTypes } from '../../routes/stack';
 import axios from 'axios';
-import { URL } from '../config/index'
+import { URL } from '../config/index';
 
 type ParamsType = {
   ListaParticipantes: {
     groupId: string;
-  },
-}
+  };
+};
 
-const ListaParticipantes = ({route} : {route: RouteProp<ParamsType, 'ListaParticipantes'>}) => {
-  const groupId = route.params.groupId
-  const [participants, setParticipants] = useState<any[]>([]);
+type GroupData = {
+  groupId: string;
+  nome: string;
+  qtdMax: number;
+  valor: number;
+  dataRevelacao: string;
+  descricao: string;
+  adminUid: string;
+  participantes: string[];
+  image?: string;
+  sorteado: boolean;
+  pares: any[];
+};
+
+type Participant = {
+  userId: string;
+  nome: string;
+  email: string;
+};
+
+const ListaParticipantes = ({ route }: { route: RouteProp<ParamsType, 'ListaParticipantes'> }) => {
+  const groupId = route.params.groupId;
+  const [participants, setParticipants] = useState<Participant[]>([]);
   const navigation = useNavigation<StackTypes>();
+  const [groupData, setGroupData] = useState<GroupData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchParticipants = async () => {
       try {
-        const response = await axios.post(`${URL}groups/getParticipants`, {groupId});
+        const response = await axios.post(`${URL}groups/getParticipants`, { groupId });
         if (response.status === 200) {
           setParticipants(response.data);
         } else {
@@ -37,9 +60,35 @@ const ListaParticipantes = ({route} : {route: RouteProp<ParamsType, 'ListaPartic
     navigation.navigate('ListaGrupos');
   };
 
+  useEffect(() => {
+    const fetchGroupData = async () => {
+      try {
+        const response = await axios.post(`${URL}groups/getGroupById`, { groupId });
+        setGroupData(response.data);
+        setLoading(false);
+      } catch (err: any) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchGroupData();
+  }, [groupId]);
+
+  useEffect(() => {
+    console.log(groupData);
+  }, [groupData]);
+
+  if (loading) return <ActivityIndicator size="large" color="#0000ff" />;
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Participantes do Grupo</Text>
+      {groupData && groupData.image ? (
+        <Image source={{ uri: groupData.image }} style={styles.image} />
+      ) : (
+        <Text>Imagem não disponível</Text>
+      )}
+      <Text style={styles.title}>Participantes do Grupo {groupData && groupData.nome}</Text>
       <FlatList
         data={participants}
         keyExtractor={(item) => item.userId}
@@ -66,12 +115,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#8a2be2',
   },
+  image: {
+    width: 150,
+    height: 150,
+    borderRadius: 100,
+    marginTop: 20,
+  },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     color: '#fff',
     textAlign: 'center',
-    marginTop: 50,
+    marginTop: 20,
     marginBottom: 20,
   },
   participantContainer: {
