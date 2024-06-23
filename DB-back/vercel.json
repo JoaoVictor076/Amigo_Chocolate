@@ -1,26 +1,27 @@
 {
     "version": 2,
     "builds": [
-        {
-            "src": "server.js",
-            "use": "@vercel/node"
-        }
+      {
+        "src": "server.js",
+        "use": "@vercel/node"
+      }
     ],
-    "routes":[
-        {
-            "src": "(.*)",
-            "dest": "server.js"
-        }
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "server.js"
+      }
     ],
     "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Content-Security-Policy",
-          "value": "default-src 'self'; font-src 'self' https://backend-amigochocolate.vercel.app"
-        }
-      ]
-    }
-  ]
-}
+      {
+        "source": "/(.*)",
+        "headers": [
+          {
+            "key": "Content-Security-Policy",
+            "value": "default-src 'self'; font-src 'self' https://backend-amigochocolate.vercel.app"
+          }
+        ]
+      }
+    ]
+  }
+  
