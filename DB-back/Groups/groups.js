@@ -135,12 +135,14 @@ router.post('/getParticipants', async (req, res) => {
                     userId,
                     nome: userSnap.data().nome,
                     email: userSnap.data().email,
+                    avatarUrl: userSnap.data().avatarUrl,
                 };
             } else {
                 return {
                     userId,
                     nome: 'Usuário não encontrado',
                     email: 'Não disponível',
+                    avatarUrl: 'Avatar não disponível',
                 };
             }
         });

@@ -1,4 +1,5 @@
-const URL = 'http://192.168.100.2:3000/';
-const URLF = 'http://192.168.100.2:8081/';
-
+const URL = 'http://localhost:3000/';
+const URLF = 'http://localhost:8081/';
+// jão: 192.168.100.2
+// diego: 192.168.100.33
 export { URL, URLF };

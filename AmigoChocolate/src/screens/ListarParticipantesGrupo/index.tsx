@@ -29,6 +29,7 @@ type Participant = {
   userId: string;
   nome: string;
   email: string;
+  avatarUrl: string;
 };
 
 const ListaParticipantes = ({ route }: { route: RouteProp<ParamsType, 'ListaParticipantes'> }) => {
@@ -94,6 +95,7 @@ const ListaParticipantes = ({ route }: { route: RouteProp<ParamsType, 'ListaPart
         keyExtractor={(item) => item.userId}
         renderItem={({ item }) => (
           <View style={styles.participantContainer}>
+            {item.avatarUrl ? <Image source={{ uri: item.avatarUrl }} style={styles.imageStyleAvatar}/> :  <Image source={require('../../../assets/avatar.png')} style={styles.imageStyleAvatar}/>}
             <View style={styles.participantInfo}>
               <Text style={styles.participantName}>{item.nome}</Text>
               <Text style={styles.participantEmail}>{item.email}</Text>
@@ -111,6 +113,7 @@ const ListaParticipantes = ({ route }: { route: RouteProp<ParamsType, 'ListaPart
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#8a2be2',
@@ -120,6 +123,12 @@ const styles = StyleSheet.create({
     height: 150,
     borderRadius: 100,
     marginTop: 20,
+  },
+  imageStyleAvatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 100,
+    marginLeft: 10,
   },
   title: {
     fontSize: 28,

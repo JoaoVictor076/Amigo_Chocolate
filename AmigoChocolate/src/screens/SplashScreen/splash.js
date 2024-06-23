@@ -1,4 +1,4 @@
-import LottieView from 'lottie-react-native';
+/*import LottieView from 'lottie-react-native';
 import React, { useRef, useEffect } from 'react';
 import { Button, StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -36,4 +36,4 @@ const styles = StyleSheet.create({
     }
 });
  
-export default Splash
+export default Splash */

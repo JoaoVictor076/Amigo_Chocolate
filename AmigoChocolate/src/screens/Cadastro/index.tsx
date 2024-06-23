@@ -1,10 +1,11 @@
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState } from 'react';
-import { Text, TextInput, View, StyleSheet, TouchableOpacity, Alert, Image } from 'react-native';
+import { Text, TextInput, View, StyleSheet, TouchableOpacity, Alert, Image, Platform } from 'react-native';
 import { StackTypes } from '../../routes/stack';
-import Login from '../Login';
+import Login from '../Login'; 
 import axios from 'axios';
+import * as ImagePicker from 'expo-image-picker';
 import { URL } from '../config/index'
 
 const Cadastro = () => {
@@ -20,6 +21,7 @@ const Cadastro = () => {
   const [loading, setloading] = useState(false)
   const [passwordConfirmation, setPasswordConfirmation] = useState<string>('');
   const [passwordConfirmationConsole, setPasswordConfirmationConsole] = useState<string>(' ');
+  const [image, setImage] = useState<string | null>(null)
 
 
   const navigation = useNavigation<StackTypes>();
@@ -40,7 +42,7 @@ const Cadastro = () => {
         sobrenome: sobrenome,
         email: email,
         password: password,
-        avatarUrl: null
+        avatarUrl: image ? image : null
       })
 
       if(response.status === 201){
@@ -120,13 +122,31 @@ const Cadastro = () => {
     return regular
   };
 
+  const pickImage = async () => {
+    if (Platform.OS === 'web') {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        alert('Desculpe, precisamos da permissão para acessar a galeria!');
+        return;
+      }
+    }
+
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Cadastro</Text>
-      <Image
-    style={styles.imageStyle}
-    source={require('../../../assets/chocopng.png')}/>
-
+      {image ? <Image source={{ uri: image }} style={styles.imageStyle}/> :  <Image source={require('../../../assets/avatar.png')} style={styles.imageStyle}/>}
 
       <TextInput
         style={[styles.input]}
@@ -168,6 +188,9 @@ const Cadastro = () => {
       />
       <Text style={styles.console}>{passwordConfirmationConsole}</Text>
 
+      <TouchableOpacity onPress={pickImage} style={styles.button}>
+          <Text style={styles.buttonText}> Selecionar Imagem </Text>
+        </TouchableOpacity>
       <TouchableOpacity onPress={handleSignUp} style={styles.button} activeOpacity={0.1}>
         <Text style={styles.buttonText}>{loading ? 'Carregando...' :'Cadastrar'}</Text>
       </TouchableOpacity>

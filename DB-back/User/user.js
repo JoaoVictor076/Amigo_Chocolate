@@ -7,9 +7,9 @@ const router = express.Router();
 
 router.post('/signUpUser', async (req, res) => {
     try {
-        const { nome, sobrenome, email, password } = req.body;
+        const { nome, sobrenome, email, password, avatarUrl } = req.body;
 
-        async function signUp(nome, sobrenome, email, password) {
+        async function signUp(nome, sobrenome, email, password, avatarUrl) {
             await createUserWithEmailAndPassword(auth, email, password)
                 .then(async (value) => {
                     let uid = value.user.uid;
@@ -19,7 +19,7 @@ router.post('/signUpUser', async (req, res) => {
                         sobrenome: sobrenome,
                         email: value.user.email,
                         sorteado: false,
-                        avatarUrl: null
+                        avatarUrl: avatarUrl
                     });
 
                     await sendEmailVerification(value.user);
@@ -31,7 +31,7 @@ router.post('/signUpUser', async (req, res) => {
                 });
         }
 
-        await signUp(nome, sobrenome, email, password);
+        await signUp(nome, sobrenome, email, password, avatarUrl);
     } catch (error) {
         res.status(500).send(error);
     }

@@ -66,6 +66,7 @@ const  CriarGrupo=()=> {
       }
     });
   }
+  
   function isDateGreaterOrEqual(dateStr:string) {
     const [day, month, year] = dateStr.split('/').map(Number);
 
