@@ -33,8 +33,8 @@ const  AtualizarGrupo =({route} : {route: RouteProp<ParamsType, 'AtualizarGrupo'
 
   const navigation = useNavigation<StackTypes>();
 
-  const handleNavegarLista = () => {
-    navigation.navigate('ListaGrupos');
+  const handleNavegarHome = () => {
+    navigation.navigate('Home');
   };
 
   const handleAtualizarGrupo = async () => {
@@ -57,7 +57,7 @@ const  AtualizarGrupo =({route} : {route: RouteProp<ParamsType, 'AtualizarGrupo'
 
       if (response.status === 200) {
         console.log('Grupo atualizado com sucesso!');
-        handleNavegarLista()
+        handleNavegarHome()
       } else {
         console.log('Erro ao atualizar grupo:', response.data);
       }
@@ -74,7 +74,7 @@ const  AtualizarGrupo =({route} : {route: RouteProp<ParamsType, 'AtualizarGrupo'
 
       if (response.status === 200) {
         console.log('Grupo apagado com sucesso!');
-        handleNavegarLista()
+        handleNavegarHome()
       } else {
         console.log('Erro ao apagar grupo:', response.data);
       }

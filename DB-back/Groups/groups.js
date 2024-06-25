@@ -1,6 +1,6 @@
 const express = require('express');
 const { auth, db, storage } = require('../Config/index.js');
-const { collection, getDocs, query, orderBy, where, updateDoc, doc, arrayUnion, getDoc, setDoc, deleteDoc } = require('firebase/firestore');
+const { collection, getDocs, query, orderBy, where, updateDoc, doc, arrayUnion, getDoc, setDoc, deleteDoc, arrayRemove } = require('firebase/firestore');
 
 const router = express.Router();
 
@@ -316,6 +316,31 @@ router.post('/deleteGroup', async (req, res) => {
     }
 });
 
+router.post('/removeParticipant', async (req, res) => {
+    try {
+        const { groupId, userUid } = req.body;
+
+        if (!groupId || !userUid) {
+            return res.status(300).send({ error: 'groupId e userUid são necessários.' });
+        }
+
+        const groupRef = doc(db, 'groups', groupId);
+        const groupSnap = await getDoc(groupRef);
+
+        if (!groupSnap.exists()) {
+            return res.status(304).send({ error: 'Grupo não encontrado.' });
+        }
+
+        await updateDoc(groupRef, {
+            participantes: arrayRemove(userUid)
+        });
+
+        res.status(200).send({ message: 'Participante removido com sucesso.' });
+    } catch (error) {
+        console.error('Error in removeParticipant:', error);
+        res.status(500).send(error);
+    }
+});
 
 
 module.exports = router;

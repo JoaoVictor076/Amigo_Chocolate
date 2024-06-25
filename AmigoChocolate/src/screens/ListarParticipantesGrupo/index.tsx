@@ -4,11 +4,17 @@ import { useNavigation, RouteProp } from '@react-navigation/native';
 import { StackTypes } from '../../routes/stack';
 import axios from 'axios';
 import { URL } from '../config/index';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type ParamsType = {
   ListaParticipantes: {
     groupId: string;
   };
+};
+
+type UserDetails = {
+  uid: string;
 };
 
 type GroupData = {
@@ -39,6 +45,7 @@ const ListaParticipantes = ({ route }: { route: RouteProp<ParamsType, 'ListaPart
   const [groupData, setGroupData] = useState<GroupData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [userDatail, setUserDatail] = useState<UserDetails | null>(null);
 
   useEffect(() => {
     const fetchParticipants = async () => {
@@ -61,6 +68,41 @@ const ListaParticipantes = ({ route }: { route: RouteProp<ParamsType, 'ListaPart
     navigation.navigate('ListaGrupos');
   };
 
+  const handleNavegarLista = () => {
+    navigation.navigate('ListaGrupos');
+  };
+
+  const handleRemoveParticipant = async (userUid: string) => {
+    try {
+      const response = await axios.post(`${URL}groups/removeParticipant`, {
+        groupId,
+        userUid,
+      });
+
+      if (response.status === 200) {
+        console.log('Participante removido com sucesso!');
+        handleNavegarLista()
+      } else {
+        console.log('Erro ao remover participante:', response.data);
+      }
+    } catch (error: any) {
+      console.log('Erro ao remover participante:', error);
+    }
+  };
+
+  const userLoggedIn = () => {
+    AsyncStorage.getItem('@user').then((value) => {
+      if (value !== null) {
+        const user = JSON.parse(value);
+        setUserDatail(user);
+      }
+    });
+  };
+
+  useEffect(() => {
+    userLoggedIn();
+  }, []);
+
   useEffect(() => {
     const fetchGroupData = async () => {
       try {
@@ -78,7 +120,8 @@ const ListaParticipantes = ({ route }: { route: RouteProp<ParamsType, 'ListaPart
 
   useEffect(() => {
     console.log(groupData);
-  }, [groupData]);
+    console.log(userDatail);
+  }, [groupData, userDatail]);
 
   if (loading) return <ActivityIndicator size="large" color="#0000ff" />;
 
@@ -93,16 +136,22 @@ const ListaParticipantes = ({ route }: { route: RouteProp<ParamsType, 'ListaPart
       <FlatList
         data={participants}
         keyExtractor={(item) => item.userId}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <View style={styles.participantContainer}>
-            {item.avatarUrl ? <Image source={{ uri: item.avatarUrl }} style={styles.imageStyleAvatar}/> :  <Image source={require('../../../assets/avatar.png')} style={styles.imageStyleAvatar}/>}
+            {item.avatarUrl ? <Image source={{ uri: item.avatarUrl }} style={styles.imageStyleAvatar}/> : <Image source={require('../../../assets/avatar.png')} style={styles.imageStyleAvatar}/>}
             <View style={styles.participantInfo}>
               <Text style={styles.participantName}>{item.nome}</Text>
               <Text style={styles.participantEmail}>{item.email}</Text>
             </View>
+            {userDatail?.uid === groupData?.adminUid && index !== 0 && (
+              <TouchableOpacity style={styles.buttonDelete} onPress={() => handleRemoveParticipant(item.userId)}>
+                <AntDesign name="delete" size={24} color="black" />
+              </TouchableOpacity>
+            )}
           </View>
         )}
       />
+
       <TouchableOpacity style={styles.button} onPress={handleBack}>
         <Text style={styles.buttonText}>Voltar</Text>
       </TouchableOpacity>
@@ -139,7 +188,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   participantContainer: {
-    width: '70%',
+    width: '100%',
     minWidth: 350,
     height: 60,
     borderColor: '#D3A46F',
@@ -150,11 +199,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
   participantInfo: {
-    marginLeft: 10,
+    marginLeft: 2,
     marginTop: 10,
     width: '70%',
     textAlign: 'left',
@@ -162,8 +211,11 @@ const styles = StyleSheet.create({
     height: 60,
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-evenly',
     alignItems: 'flex-start',
+    flexWrap: 'wrap',
+    overflow: 'hidden',
+    paddingRight: 10,
   },
   participantName: {
     fontWeight: 'bold',
@@ -190,6 +242,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 6,
+  },
+  buttonDelete:{
+    width: 25,
+    height: 20,
+    marginLeft: 10,
+    marginRight: 10,
   },
   buttonText: {
     color: '#FFF7EB',
