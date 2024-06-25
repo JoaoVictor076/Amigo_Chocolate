@@ -253,7 +253,7 @@ const  AtualizarGrupo =({route} : {route: RouteProp<ParamsType, 'AtualizarGrupo'
       <TouchableOpacity  onPress={handleAtualizarGrupo} style={styles.button} activeOpacity={0.1}>
         <Text style={styles.buttonText}> Atualizar Grupo </Text>
       </TouchableOpacity>
-      <TouchableOpacity  onPress={handleDeleteGroup} style={styles.button} activeOpacity={0.1}>
+      <TouchableOpacity  onPress={handleDeleteGroup} style={styles.buttonApagar} activeOpacity={0.1}>
         <Text style={styles.buttonText}> Apagar grupo </Text>
       </TouchableOpacity>
       </View>
@@ -289,6 +289,25 @@ const styles = StyleSheet.create({
       width: 0,
       height: 4,
     },
+  
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 6,
+  },
+  buttonApagar: {
+    width: '80%',
+    height: 50,
+    borderRadius: 10,
+    backgroundColor: '#ec5353', // Mesma cor do botão da tela de Login
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+    shadowColor: '#2D2926', // Mesma sombra do botão da tela de Login
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+  
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 6,
