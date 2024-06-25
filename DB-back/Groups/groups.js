@@ -1,6 +1,6 @@
 const express = require('express');
 const { auth, db, storage } = require('../Config/index.js');
-const { collection, getDocs, query, orderBy, where, updateDoc, doc, arrayUnion, getDoc, setDoc } = require('firebase/firestore');
+const { collection, getDocs, query, orderBy, where, updateDoc, doc, arrayUnion, getDoc, setDoc, deleteDoc } = require('firebase/firestore');
 
 const router = express.Router();
 
@@ -291,6 +291,31 @@ function shuffleArray(array) {
         [array[i], array[j]] = [array[j], array[i]];
     }
 }
+
+router.post('/deleteGroup', async (req, res) => {
+    try {
+        const { groupId } = req.body;
+
+        if (!groupId) {
+            return res.status(300).send('groupId é necessário');
+        }
+
+        const groupRef = doc(db, 'groups', groupId);
+        const groupSnap = await getDoc(groupRef);
+
+        if (!groupSnap.exists()) {
+            return res.status(304).send('Grupo não encontrado');
+        }
+
+        await deleteDoc(groupRef);
+
+        res.status(200).send('Grupo apagado com sucesso.');
+    } catch (error) {
+        console.error('Erro ao apagar o grupo:', error);
+        res.status(500).send(error);
+    }
+});
+
 
 
 module.exports = router;

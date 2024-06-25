@@ -23,11 +23,13 @@ type GroupProps = {
   handleNavegarConvite: (nomeDoGrupo: string, groupId: string) => void, 
   handleNavegarParticipantes:(groupId: string) => void, 
   handleAtualizarGrupo: (groupId: string) => void,
-  handleSortear: (groupId: string) => void,
+  handleSortear: (groupId: string, admin:boolean) => void,
   handleBuscarPar: (groupId: string) => Promise<any>;
   nomeDoGrupo: string,
   image: string,
   groupId: string,
+  adminUid: string,
+  userDatail: any,
 };
 
 type Par = {
@@ -51,6 +53,8 @@ const GroupComponent: React.FC<GroupProps> = ({
   handleAtualizarGrupo,
   handleSortear,
   handleBuscarPar,
+  adminUid,
+  userDatail,
 }) => {
   const [meuPar, setMeuPar] = useState<Par | null>(null);
 
@@ -70,7 +74,7 @@ const GroupComponent: React.FC<GroupProps> = ({
   return (
     <View style={styles.nomeGrupocontainer}>
       <TouchableOpacity 
-        onPress={() => { handleSortear(groupId) }}
+        onPress={() => { handleSortear(groupId, (adminUid===userDatail?.uid ? true : false)) }}
         style={styles.buttonIconSorteio} 
         activeOpacity={0.1}>
         <Image style={styles.imageStyle} source={{ uri: image }}  />
@@ -91,12 +95,12 @@ const GroupComponent: React.FC<GroupProps> = ({
         </Text>
       </View>
       <View>
-        <TouchableOpacity 
+        {adminUid===userDatail?.uid && (<TouchableOpacity 
           onPress={() => { handleAtualizarGrupo(groupId) }}
           style={styles.buttonIcon} 
           activeOpacity={0.1}>
           <AntDesign name="edit" size={25} color="black" />
-        </TouchableOpacity>
+        </TouchableOpacity>)}
         <TouchableOpacity
           onPress={() => handleNavegarConvite(nomeDoGrupo, groupId)}
           style={styles.buttonIcon}
@@ -132,8 +136,6 @@ const ListaGrupos = () => {
   };
 
   const handleNavegarConvite = (nomeGrupo: string, groupId: string) => {
-
-
     const inviteLink = `${URLF}Convites/${groupId}/${nomeGrupo}`;
     copyToClipboard(inviteLink);
     navigation.navigate('Convites', { nome: nomeGrupo, groupId: groupId } as unknown as {nome:string, groupId:string});
@@ -156,26 +158,30 @@ const ListaGrupos = () => {
     });
   };
 
-  async function handleSortear(groupId: string){
-    try {
-      const response = await axios.post(`${URL}groups/sortear`, {
-        groupId
-      });
-  
-      if (response.status === 200) {
-        setMessage('Grupo sorteado com sucesso! ');
-        handleNavegarHome();
-      } else {
-        setMessage('Erro ao sortear grupo: ' + response.data);
+  async function handleSortear(groupId: string, admin: boolean){
+    if (admin) {
+      try {
+        const response = await axios.post(`${URL}groups/sortear`, {
+          groupId
+        });
+    
+        if (response.status === 200) {
+          setMessage('Grupo sorteado com sucesso! ');
+          handleNavegarHome();
+        } else {
+          setMessage('Erro ao sortear grupo: ' + response.data);
+        }
+      } catch (error: any) {
+        if (error.response) {
+          setMessage('Erro ao sortear grupo: ' + error.response.data);
+        } else if (error.request) {
+          setMessage('Erro ao aguardar resposta do servidor: ' + error.request);
+        } else {
+          setMessage('Erro inesperado ao sortear grupo: ' + error.message);
+        }
       }
-    } catch (error: any) {
-      if (error.response) {
-        setMessage('Erro ao sortear grupo: ' + error.response.data);
-      } else if (error.request) {
-        setMessage('Erro ao aguardar resposta do servidor: ' + error.request);
-      } else {
-        setMessage('Erro inesperado ao sortear grupo: ' + error.message);
-      }
+    } else {
+      setMessage('Apenas o administrador do grupo pode realizar o sorteio! ');
     }
   }
 
@@ -224,7 +230,6 @@ const ListaGrupos = () => {
 
   useEffect(() => {
     if (userDatail) {
-      console.log(userDatail);
       try {
         const loadGroups = async () => {
           const response = await axios.post(`${URL}groups/getGroupList`, {
@@ -267,6 +272,8 @@ const ListaGrupos = () => {
             handleNavegarParticipantes={handleNavegarParticipantes}
             handleSortear={handleSortear}
             handleBuscarPar={() => handleBuscarPar(item.groupId)}
+            adminUid={item.adminUid}
+            userDatail={userDatail}
           />
         )}
         keyExtractor={(item) => item.id.toString()}

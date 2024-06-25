@@ -66,6 +66,23 @@ const  AtualizarGrupo =({route} : {route: RouteProp<ParamsType, 'AtualizarGrupo'
     }
   };
 
+  const handleDeleteGroup = async () => {
+    try {
+      const response = await axios.post(`${URL}groups/deleteGroup`, {
+        groupId
+      });
+
+      if (response.status === 200) {
+        console.log('Grupo apagado com sucesso!');
+        handleNavegarLista()
+      } else {
+        console.log('Erro ao apagar grupo:', response.data);
+      }
+    } catch (error: any) {
+      console.log('Erro ao apagar grupo:', error.message);
+    }
+  };
+
   const handleGetGroupData = async () => {
 
     try {
@@ -236,6 +253,9 @@ const  AtualizarGrupo =({route} : {route: RouteProp<ParamsType, 'AtualizarGrupo'
       <TouchableOpacity  onPress={handleAtualizarGrupo} style={styles.button} activeOpacity={0.1}>
         <Text style={styles.buttonText}> Atualizar Grupo </Text>
       </TouchableOpacity>
+      <TouchableOpacity  onPress={handleDeleteGroup} style={styles.button} activeOpacity={0.1}>
+        <Text style={styles.buttonText}> Apagar grupo </Text>
+      </TouchableOpacity>
       </View>
     </View>
   );
@@ -319,6 +339,7 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     alignSelf: 'center',
+    marginBottom: 20,
   },
 });
 
